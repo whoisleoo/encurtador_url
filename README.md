@@ -18,6 +18,7 @@
 ## Sobre o Projeto
 
 **Encurtador URL** é uma aplicação criada pra encurtar links de forma dinamica e customizada. 
+Você pode acessar uma demonstração do site **NÃO FUNCIONAL** <a href="encurtador-url-mu.vercel.app">aqui</a>
 
 
 ---
