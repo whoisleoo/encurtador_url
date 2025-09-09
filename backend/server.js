@@ -1,12 +1,14 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import urlRoute from './src/routes/urlRoute.js'
+import cors from 'cors'
 
 
 const PORT = process.env.PORT || 6969;
 const app = express()
 
 app.use(express.json());
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.json("Backend Funcionando.")
