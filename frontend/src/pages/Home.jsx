@@ -2,13 +2,18 @@ import api from '../services/api.js'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react';
 
+
+
 function Home(){
-    const navigate = useNavigate();
     const inputShortUrl = useRef();
     const inputLongUrl = useRef();
     const [inputError, setInputError] = useState('');
     const [inputSuccess, setInputSuccess] = useState('');
+     const [displayText, setDisplayText] = useState('Copy your link!')
+     const [generatedUrl, setGeneratedUrl] = useState(null);
 
+
+    
 
     const HandleEncurtador = async function(e){
         e.preventDefault()
@@ -16,20 +21,32 @@ function Home(){
         setInputSuccess('');
         try{
 
-            await api.post('/url', {
+            const response = await api.post('/url', {
                 shortUrl: inputShortUrl.current.value,
                 longUrl: inputLongUrl.current.value
             });
-            setInputSuccess('URL encurtada com sucesso.')
-            console.log(`Enviado com sucesso: ${inputShortUrl} e ${longUrl}`)
+            setInputSuccess('URL encurtada com sucesso!')
+            setGeneratedUrl(response.data.newUrl);
+            inputShortUrl.current.value = '';
+            inputLongUrl.current.value = '';
+        
         }catch(error){
-            if(error.response && error.response.data){
+           if(error.response && error.response.data){
         const mensagem = error.response.data.error || 'Erro interno do servidor.'
         setInputError(mensagem);
-        }
+
+        if(error.response && error.response.data.erros_encontrados){
+        const erros = error.response.data.erros_encontrados.join('.  ');
+        setInputError(erros);
+        }else{
+        setInputError(mensagem)
+      }
+      }
             console.log(`Algo muito errado aconteceu lol ${error}`)
         }
     }
+
+
 
     const ErrorMessage = ({message}) => {
     if(!message){
@@ -49,9 +66,27 @@ function Home(){
     return(
     <div className='backdrop-blur-md text-green-500 px-4 py-3 rounded-lg mb-4'>
       {message}
+      <div className='pt-2'>
+      <span className={` cursor-pointer ${displayText == 'Copied!' ? 'text-gray-200 border-gray-200 ' : 'text-white border-b-1'}`}  onClick={() => (handleCopy(`http://${generatedUrl}`))}>{displayText}</span>
+      </div>
     </div>
     )
   }
+
+    const handleCopy = async (text) => {
+
+      try {
+        await navigator.clipboard.writeText(text);
+        setDisplayText('Copied!')
+        setTimeout(() => {
+            setDisplayText('Copy your link!')
+        }, 2000);
+
+    
+      } catch (error) {
+        console.error('Failed to copy text:', error);
+      }
+    };
 
     return(
         <section className="min-h-screen bg-black text-white overflow-hidden">
@@ -79,6 +114,7 @@ function Home(){
                     <ErrorMessage message={inputError} />
                     <SuccessMessage message={inputSuccess}/>
                 </form>
+                
             </div>
           </div>
         </section>

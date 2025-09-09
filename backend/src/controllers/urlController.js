@@ -11,7 +11,7 @@ export const postUrl = async function(req, res){
             })
         }
 
-        if(!longUrl.includes("https://" || !longUrl.includes("http://"))){
+        if(!longUrl.startsWith("https://") && !longUrl.startsWith("http://")){
             return res.status(400).json({
                 error: "URL fornecida não apresenta https://"
             })
@@ -41,7 +41,7 @@ export const postUrl = async function(req, res){
             message: "URL encurtada com sucesso",
             longUrl: longUrl,
             shortUrl: shortUrl,
-            newUrl: `localhost:5173/${shortUrl}`
+            newUrl: `localhost:6969/url/${shortUrl}`
         })
 
     }catch(error){
@@ -51,4 +51,31 @@ export const postUrl = async function(req, res){
         })
     }
 
+}
+
+
+
+
+export const getUrl = async function(req, res){
+    const { shortUrl } = req.params
+
+    try{
+        const url = await prisma.url.findFirst({
+            where: {
+                shortUrl: shortUrl
+            }
+        })
+
+        if(!url){
+            return res.status(400).json({
+                error: "URL com esse encurtador não existe."
+            })
+        }
+        res.redirect(url.longUrl)
+        
+    }catch(error){
+        res.status(500).json({
+            message: error
+        })
+    }
 }
