@@ -1,7 +1,7 @@
 
 
 <div align="center">
- <img src="https://img.shields.io/badge/status-projeto%20finalizado-green" alt="Status">
+ <img src="https://img.shields.io/badge/status-Finalizado-green" alt="Status">
 </div>
 
 <div align="center">
